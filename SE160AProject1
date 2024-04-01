@@ -1,0 +1,230 @@
+function [Name,PID,xaf,yaf,A,xc,yc,Ixx,Iyy,Ixy,Ixxc,Iyyc,Ixyc,Ixxu,Iyyu,Ixyu] =GenSecProp_Function(iSection,alpha,xo,yo,x,y,nt,NACA,co)
+
+Name = {"Brandon Vinh"}
+
+PID = {"A16315240"}
+
+if iSection == 1
+
+for i = 1:1:nt-2
+
+ a(i) = 1/2*(x(1)*(y(i+1)-y(i+2))+x(i+1)*(y(i+2)-(y(1)))+x(i+2)*(y(1)-y(i+1)));
+
+  x_c(i) = (1/3)*(x(1)+x(i+1)+x(i+2));
+
+  y_c(i) = (1/3)*(y(1)+y(i+1)+y(i+2));
+
+  Ixx(i) = (a(i)/12)*(y(1)*(2*y(1)+y(i+1)+y(i+2))+y(i+1)*(y(1)+2*y(i+1)+y(i+2))+y(i+2)*(y(1)+y(i+1)+2*y(i+2)));
+
+  Iyy(i) = (a(i)/12)*(x(1)*(2*x(1)+x(i+1)+x(i+2))+x(i+1)*(x(1)+2*x(i+1)+x(i+2))+x(i+2)*(x(1)+x(i+1)+2*x(i+2)));
+
+  Ixy(i) = (a(i)/12)*(x(1)*(2*y(1)+y(i+1)+y(i+2))+x(i+1)*(y(1)+2*y(i+1)+y(i+2))+x(i+2)*(y(1)+y(i+1)+2*y(i+2)));
+
+  aa(i) = a(i)*x_c(i);
+
+  ax = sum(aa)
+
+  bb(i) = a(i)*y_c(i);
+
+  bx = sum(bb);
+
+ i = i+1;
+
+end
+
+A = sum(a);
+
+xc = (1/A)*ax
+
+yc = (1/A)*bx
+
+Ixx = sum(Ixx)
+
+Iyy = sum(Iyy)
+
+Ixy = sum(Ixy)
+
+Ixxc = Ixx-(A * (yc)^2)
+
+Iyyc = Iyy-(A * (xc)^2)
+
+Ixyc = Ixy-(A * (yc*xc))
+
+Ixxu = Ixxc*(cosd(alpha))^2+Iyyc*(sind(alpha))^2+2*Ixyc*(cosd(alpha)*sind(alpha))+A*yo^2
+
+Ixyu = (Iyyc-Ixxc)*(cosd(alpha)*sind(alpha))+Ixyc*((cosd(alpha))^2-(sind(alpha))^2)+A*xo*yo
+
+Iyyu = Iyyc*((cosd(alpha))^2)+Ixxc*((sind(alpha))^2)-2*Ixyc*(cosd(alpha)*(sind(alpha)))+A*xo^2
+
+xaf = x
+
+yaf = y
+
+end
+
+
+
+if iSection ==2
+
+     xa1 = linspace(0,co,201);
+
+  xa2 = linspace(co,0,201);
+
+  xaf = [xa1 xa2]
+
+  yaf = [];
+
+  A=[];
+
+  xc=[];
+
+  yc = [];
+
+  Ixx=[];
+
+  Iyy=[];
+
+  Ixy=[];
+
+  Ixxc=[]
+
+  Iyyc=[];
+
+  Ixyc=[];
+
+  Ixxu=[];
+
+  Iyyu=[];
+
+  Ixyu=[];
+
+  NACA = num2str(NACA)
+
+  if length(NACA)<=2
+
+      M = 0
+
+      P = 0
+
+      TT = str2num(NACA)
+
+      
+
+  elseif length(NACA)==4
+
+M = str2num(NACA(1))
+
+P = str2num(NACA(2))
+
+TT=str2num([NACA(3) NACA(4)])
+
+  end
+
+  Camber_Max = co*(M/100);
+
+x_max = co*(P/10);
+
+t_max = co*(TT/100);
+
+%%cambered
+
+if P ~= 0
+
+for i = 1:1:402
+
+   b =  xaf(i);
+
+    if b>=0 && b < x_max
+
+    Yc(i) = co*((-M/P^2)*(xaf(i)/co)^2+(M/(5*P))*(xaf(i)/co))
+
+    elseif b >= x_max && b < co
+
+    Yc(i) = ((co*M)/(100-20*P+P^2))*(-(xaf(i)/co)^2+(P/5)*(xaf(i)/co)+(1-P/5))
+
+    end
+
+end
+
+for i = 1:1:402
+
+    Ys(i) = 5*co*(TT/100)*(0.2969*sqrt(xaf(i)/co)-0.126*(xaf(i)/co)-0.3516*(xaf(i)/co)^2+0.2843*(xaf(i)/co)^3-0.1015*(xaf(i)/co)^4);
+
+end
+
+%%notcambered
+
+elseif P == 0
+
+for i = 1:1:402
+
+    Ys(i) = 5*co*(TT/100)*(0.2969*sqrt(xaf(i)/co)-0.126*(xaf(i)/co)-0.3516*(xaf(i)/co)^2+0.2843*(xaf(i)/co)^3-0.1015*(xaf(i)/co)^4);
+
+end
+
+Yc = [zeros(1,402)];
+
+end
+
+  ya1 = Yc(1:201)-Ys(1:201)
+
+  ya2 = Yc(202:402)+Ys(202:402);
+
+  yaf = [ya1 ya2]
+
+
+
+  for i =1:1:400
+
+a(i) = 1/2*(xaf(1)*(yaf(i+1)-yaf(i+2))+xaf(i+1)*(yaf(i+2)-(yaf(1)))+xaf(i+2)*(yaf(1)-yaf(i+1)));
+
+  x_c(i) = (1/3)*(xaf(1)+xaf(i+1)+xaf(i+2));
+
+  y_c(i) = (1/3)*(yaf(1)+yaf(i+1)+yaf(i+2));
+
+  Ixx(i) = (a(i)/12)*(yaf(1)*(2*yaf(1)+yaf(i+1)+yaf(i+2))+yaf(i+1)*(yaf(1)+2*yaf(i+1)+yaf(i+2))+yaf(i+2)*(yaf(1)+yaf(i+1)+2*yaf(i+2)));
+
+  Iyy(i) = (a(i)/12)*(xaf(1)*(2*xaf(1)+xaf(i+1)+xaf(i+2))+xaf(i+1)*(xaf(1)+2*xaf(i+1)+xaf(i+2))+xaf(i+2)*(xaf(1)+xaf(i+1)+2*xaf(i+2)));
+
+  Ixy(i) = (a(i)/12)*(xaf(1)*(2*yaf(1)+yaf(i+1)+yaf(i+2))+xaf(i+1)*(yaf(1)+2*yaf(i+1)+yaf(i+2))+xaf(i+2)*(yaf(1)+yaf(i+1)+2*yaf(i+2)));
+
+  aa(i) = a(i)*x_c(i);
+
+  ax = sum(aa);
+
+  bb(i) = a(i)*y_c(i);
+
+  bx = sum(bb);
+
+  end
+
+  A = sum(a);
+
+xc = (1/A)*ax
+
+yc = (1/A)*bx
+
+Ixx = sum(Ixx)
+
+Iyy = sum(Iyy)
+
+Ixy = sum(Ixy)
+
+Ixxc = Ixx-(A * (yc)^2)
+
+Iyyc = Iyy-(A * (xc)^2)
+
+Ixyc = Ixy-(A * (yc*xc))
+
+Ixxu = Ixxc*(cosd(alpha))^2+Iyyc*(sind(alpha))^2+2*Ixyc*(cosd(alpha)*sind(alpha))+A*yo^2
+
+Ixyu = (Iyyc-Ixxc)*(cosd(alpha)*sind(alpha))+Ixyc*((cosd(alpha))^2-(sind(alpha))^2)+A*xo*yo
+
+Iyyu = Iyyc*((cosd(alpha))^2)+Ixxc*((sind(alpha))^2)-2*Ixyc*(cosd(alpha)*(sind(alpha)))+A*xo^2
+
+end
+
+end
+
+
+
