@@ -1,0 +1,816 @@
+function result = SE160B_1_Wing_Analysis_Function(inFile, outFile, ...
+
+    stringerDef, skinDef,wingDef, wingAero)
+
+outFile = "SE160B_1_Wing_Analysis_Output (Blank).xlsx"
+
+inFile = 'SE160B_1_Wing_Analysis_Input.xlsx'
+
+name    = {'Brandon Vinh'};
+
+   PID     = {'A16315240'};
+
+   version = {'Spring, 2023 (v1)'};
+
+% Write program version, author, PID
+
+   xlswrite(outFile, version , 1, 'F7' );            % Write Version
+
+   xlswrite(outFile, name    , 1, 'F9' );            % Write Name
+
+   xlswrite(outFile, PID     , 1, 'F10');            % Write PID
+
+% Extract stringer property definition
+
+   for i = 1:4;
+
+     Ys(i)   = stringerDef( 1,i);             % Stringer y locations
+
+     Zs(i)   = stringerDef( 2,i);             % Stringer z locations
+
+     As(i)   = stringerDef( 3,i);             % Stringer Area
+
+     Iyys(i) = stringerDef( 4,i);             % Stringer Iyy
+
+     Izzs(i) = stringerDef( 5,i);             % Stringer Izz
+
+     Iyzs(i) = stringerDef( 6,i);             % Stringer Iyz
+
+     Es(i)   = stringerDef( 7,i)*(1000000.);  % Stringer Young's Modulus (psi)
+
+     SyTs(i) = stringerDef( 8,i)*(1000.);     % Stringer Yield Tension (psi)
+
+     SuTs(i) = stringerDef( 9,i)*(1000.);     % Stringer Ultimate Tension (psi)
+
+     SyCs(i) = stringerDef(10,i)*(1000.);     % Stringer Yield Compression (psi)
+
+     SuCs(i) = stringerDef(11,i)*(1000.);     % Stringer Ultimate Compression (psi)
+
+   end;
+
+
+
+% Extract skin definition
+
+   for i = 1:4;
+
+     T_sk(i)     = skinDef( 1,i);             % Skin thickness
+
+     G_sk(i)     = skinDef( 2,i)*(1000000.);  % Skin shear modulus (Msi to psi)
+
+     tau_y_sk(i) = skinDef( 3,i)*(1000.);     % Skin shear strength (yield)
+
+     tau_u_sk(i) = skinDef( 4,i)*(1000.);     % Skin shear strength (ultimate)
+
+   end;
+
+
+
+% Extract wing geometry, weight, load factor, and safety factor
+
+   L     = wingDef(1);                        % Wing Length (inch)
+
+   ws    = wingDef(2);                        % Wing Weight (lb/inch)
+
+   nLF   = wingDef(3);                        % Load Factor (1)
+
+   SFy   = wingDef(4);                        % Safety Factor (yield)
+
+   SFu   = wingDef(5);                        % Safety Factor (ultimate)
+
+   chord = (Ys(3)-Ys(1));                     % Wing chord (inch)
+
+
+
+% Extract wing aerodynamic definition
+
+   pz0   = wingAero(1);                       % Lift distribution (constant)  (lb/in)
+
+   pz2   = wingAero(2);                       % Lift distribution (2nd order) (lb/in)
+
+   pz4   = wingAero(3);                       % Lift distribution (4th order) (lb/in)
+
+   py0   = wingAero(4);                       % Drag distribution (xonstant)  (lb/in)
+
+   pyr   = wingAero(5);                       % Drag distribution (rth order) (lb/in)
+
+   rth   = wingAero(6);                       % Drag distribution (polynomial order) (1)
+
+   mx0   = wingAero(7);                       % twist moment distribution (constant)  (lb-in/in)
+
+%% Analytical Study
+
+
+
+%ws = 3
+
+%nLF = -1.5
+
+%pz0 = -22.5
+
+%pz2 = 6
+
+%pz4= 1.5
+
+%py0 = 60
+
+%pyr = 6
+
+%n = 10
+
+%mx0 = 200
+
+
+
+%for i = 1:4
+
+ %   Es(i) = 23.5*10^6
+
+  %  G_sk(i) = 6*10^6
+
+   % SyTs(i) = 263*10^3
+
+    %SuTs(i) =263*10^3
+
+     %SyCs(i) = -263*10^3
+
+    %SuCs(i)=-263*10^3
+
+    % tau_y_sk(i) =88*10^3
+
+     %tau_u_sk(i) =88*10^3
+
+%end
+
+
+
+%% normal code
+
+%%Modulus Weight centroid y
+
+Weighty = Ys.*As;
+
+Weightz = Zs.*As;
+
+Yc = sum(Weighty)/sum(As);
+
+Zc = sum(Weightz)/sum(As);
+
+    xlswrite(outFile, Yc, 1, 'G68');
+
+   xlswrite(outFile, Zc, 1, 'G69');
+
+%%Axial Stiffness
+
+EA = sum(Es.*As);
+
+ xlswrite(outFile, EA, 1, 'G70');
+
+%%Bending Stiffness
+
+       r =  ((Es.*Iyys))+(Es.*As.*((Zs-Zc).^2));
+
+       d = (Es.*Izzs)+(Es.*As.*((Ys-Yc).^2));
+
+       g = Iyzs+Es.*As.*Ys.*Zs;
+
+    EIYY = sum(r);
+
+    EIZZ = sum(d) ;
+
+    EIYZ = sum(g);
+
+xlswrite(outFile, EIYY, 1, 'G71');
+
+xlswrite(outFile, EIZZ, 1, 'G72');
+
+xlswrite(outFile, EIYZ, 1, 'G73');
+
+%%Torsion Stiffness
+
+IZZ = EIZZ/Es(1);
+
+IYY = EIYY/Es(1);
+
+a = 12;
+
+b = 3.6;
+
+c = 48;
+
+AEllispse = ((pi*a/2*b))/2;
+
+ARec = (c/2-Ys(2))*b*2;
+
+ATri = b*2*c/2/2;
+
+SEllipse = (pi*(3*((a/2)+b)-sqrt((3*(a/2)+b)*((a/2)+3*b))))/2;
+
+SRec = (c/2-Ys(2))*2;
+
+STri = sqrt(Zs(2)^2+(c/2)^2)*2;
+
+stot = SEllipse+SRec+STri;
+
+Atot = ATri+AEllispse+ARec;
+
+GJ = (4*Atot^2*G_sk(1)*T_sk(1))/stot
+
+xlswrite(outFile, GJ, 1, 'G74')
+
+S = [SEllipse/2, SRec/2+STri/2, SRec/2+STri/2,SEllipse/2]
+
+
+
+
+
+%% plots
+
+%%Distributed Drag
+
+%%py = pyo+pyn(x/L)^n
+
+figure(1)
+
+fplot(@(x) py0+pyr*(x/L)^rth, [0,L])
+
+ylabel("Distributed Drag (lb/in)")
+
+xlabel("Half-Span (inch)")
+
+createFigure(outFile, 1,1,"E80","O100")
+
+%%Distributed Lift 
+
+%%pzo+pz2(x/L)^2+pz4(x/L)^4
+
+figure(2)
+
+fplot(@(x) (pz0-(ws*nLF)+pz2*(x/L)^2+pz4*(x/L)^4), [0,L])
+
+ylabel("Distributed Lift (lb/in)")
+
+xlabel("Half-Span (inch)")
+
+createFigure(outFile, 1,2,"E103","O123")
+
+%%Distributed Torque
+
+figure(3)
+
+fplot(@(x) mx0-3*(pz0+pz2*(x/L)^2+pz4*(x/L)^4)-9*nLF*ws, [0,L])
+
+ylabel("Distributed Torque (lb-in/in)")
+
+xlabel("Half-Span (inch)")
+
+createFigure(outFile, 1,3,"E126","O146")
+
+%% Axialforce
+
+px = 0;
+
+xlswrite(outFile, px, 1, 'G151')
+
+%%Transverse Force y
+
+func= @(x) py0+pyr*(x/L).^rth
+
+py = integral(func, 0, L);
+
+xlswrite(outFile, py, 1, 'G152')
+
+%%Transverse Force Z
+
+func1 = @(x) pz0+pz2*(x/L).^2+pz4*(x/L).^4
+
+pz = integral(func1,0,L)-ws*L*nLF;
+
+xlswrite(outFile, pz, 1, 'G153')
+
+%% Plots
+
+
+
+%%Shear Y-Direction 
+
+figure(4)
+
+syms x
+
+sy = py0+pyr*(x/L).^rth
+
+sheary = py- int(sy)
+
+SHEARY = fplot(sheary, [0,L])
+
+grid on 
+
+ylabel("Shear (Y-Direction) (lb)")
+
+xlabel("Half-Span (inch)")
+
+createFigure(outFile, 1,4,"E160","O180")
+
+
+
+%%Shear Z direction
+
+figure(5)
+
+sz = pz0+pz2.*(x./L).^2+pz4.*(x./L).^4-nLF*ws
+
+shearz = pz-int(sz)
+
+fplot(shearz, [0,L])
+
+ylabel("Shear (Z-Direction (lb)")
+
+xlabel("Half-Span (inch)")
+
+grid on 
+
+createFigure(outFile, 1,5,"E183","O203")
+
+
+
+%%Torque about x
+
+func2 = @(x) mx0 - 3*(pz0 + pz2*(x/L).^2 + pz4*(x/L).^4) - 9*nLF*ws
+
+mx= integral(func2,0,L)
+
+xlswrite(outFile, mx, 1, 'G154')
+
+
+
+%%Torsion Moment 
+
+figure(6)
+
+mmx = mx0 - 3*(pz0 + pz2*(x/L).^2 + pz4*(x/L).^4) - 9*nLF*ws
+
+fplot( mx-int(mmx), [0,L])
+
+ylabel("Torision Moment (about X-axis) (lb-in)")
+
+xlabel("Half-Span (inch)")
+
+createFigure(outFile, 1,6,"E206","O226")
+
+%%bending about y
+
+func3 = @(x)  (pz0+pz2*(x/L).^2+pz4*(x/L).^4).*x-ws*nLF*x
+
+my = -integral(func3,0,L)
+
+xlswrite(outFile, my, 1, 'G155')
+
+%%bending about z
+
+func4 = @(x) (py0+pyr*(x/L).^rth).*x
+
+mz = integral(func4,0,L)
+
+xlswrite(outFile, mz, 1, 'G156')
+
+
+
+%%Bending Moment y 
+
+figure(7)
+
+by = pz0+pz2*(x/L).^2+pz4*(x/L).^4.*x-ws*nLF*x
+
+fplot( my+int(pz-int(sz)), [0,L])
+
+ylabel("Bending Moment (about Y-axis) (lb-in)")
+
+xlabel("Half-Span (inch)")
+
+createFigure(outFile, 1,7,"E229","O249")
+
+%%Bending Moment z 
+
+figure(8)
+
+fplot(mz-int(sheary), [0,L])
+
+ylabel("Bending Moment (about Z-axis) (lb-in)")
+
+xlabel("Half-Span (inch)")
+
+createFigure(outFile, 1,8,"E252","O272")
+
+
+
+%% shear centre
+
+%%Shear Centres (FINISH)
+
+A12 = abs((1/4*pi*(Ys(2))*(Zs(2))));
+
+A23 = 1/2*(c/2-Ys(2))*(Zs(4)-Zs(2))+1/4*(Zs(4)-Zs(2))*c/2;
+
+A34 = A23;
+
+A41 = A12;
+
+V = -py/EIZZ;
+
+W = -pz/EIYY;
+
+syms jk kj
+
+MMXX = pz*jk+py*kj;
+
+MATRIX1 = [-1,1,0,0;0,-1,1,0;0,0,-1,1;2*A12,2*A23, 2*A34, 2*A41];
+
+MATRIX2 = [(Es(2)*As(2)*(V*(Ys(2)-Yc)+W*(Zs(2)-Zc)));(Es(3)*As(3)*(V*(Ys(3)-Yc)+W*(Zs(3)-Zc)));(Es(4)*As(4)*(V*(Ys(4)-Yc)+W*(Zs(4)-Zc)));MMXX];
+
+%For shear stress distribution
+
+MATRIX3 = [As(2)*(sheary*(Ys(2)-Yc)+shearz*(Zs(2)-Zc));As(3)*(sheary*(Ys(3)-Yc)+shearz*(Zs(3)-Zc));As(4)*(sheary*(Ys(4)-Yc)+shearz*(Zs(4)-Zc));mx-int(mmx)];
+
+sheardist = MATRIX1\MATRIX3;
+
+shear = MATRIX1\MATRIX2;
+
+q12 = shear(1);
+
+q23 = shear(2);
+
+q34 = shear(3);
+
+q41 = shear(4);
+
+soln = (q12*S(1)+q23*S(2)+q34*S(3)+q41*S(4))/(G_sk(1)*T_sk(1))*(1/(2*Atot))==0;
+
+[sooln,sollnz] = vpasolve(soln,jk,kj)
+
+ey = double(Ys(2)+sooln);
+
+ez = double(sollnz);
+
+xlswrite(outFile, ey, 1, 'G75');
+
+xlswrite(outFile, ez, 1, 'G76');
+
+
+
+kyy = EIYY/(EIYY*EIZZ-EIYZ^2)
+
+kzz = EIZZ/(EIYY*EIZZ-EIYZ^2)
+
+kyz = EIYZ/(EIYY*EIZZ-EIYZ^2)
+
+%% Axial Stress
+
+%%Stringer one
+
+figure(9)
+
+sig = @(x) (Yc-Ys(1))*(mz-int(sheary))/(EIZZ/Es(1));
+
+sigg1 = sig(0);
+
+siggg1 = subs(sigg1,x,0);
+
+%%gives in KSI
+
+sigmaxx1 = double(siggg1/1000);
+
+xlswrite(outFile, sigmaxx1, 1, 'G277')
+
+fplot(sigg1/1000);
+
+hold on
+
+
+
+%%Stringer 2
+
+sig2 = @(x) -(Ys(2)-Yc)*((mz-int(sheary)))/(EIZZ/Es(1))+(Zs(2)-Zc)*(my+int(pz-int(sz)))/(EIYY/Es(1));
+
+sigg2 = sig2(0);
+
+siggg2 = subs(sigg2,x,0);
+
+%%gives in KSI
+
+sigmaxx2 = double(siggg2/1000);
+
+xlswrite(outFile, sigmaxx2, 1, 'H277')
+
+fplot(sigg2/1000)
+
+hold on
+
+
+
+%%Stringer 3
+
+sig3 = @(x) -(Ys(3)-Yc)*(mz-int(sheary))/(EIZZ/Es(1));
+
+sigg3 = sig3(0);
+
+siggg3 = subs(sigg3,x,0);
+
+%%gives in KSI
+
+sigmaxx3 = double(siggg3/1000);
+
+xlswrite(outFile, sigmaxx3, 1, 'I277')
+
+fplot(sigg3/1000)
+
+hold on
+
+
+
+%%Stringer 4
+
+sig4 =  @(x) -(Ys(4)-Yc)*(mz-int(sheary))/(EIZZ/Es(1))+(Zs(4)-Zc)*(my+int(pz-int(sz)))/(EIYY/Es(1));
+
+sigg4 = sig4(0);
+
+siggg4 = subs(sigg4,x,0);
+
+%%gives in KSI
+
+sigmaxx4 = double(siggg4/1000)
+
+xlswrite(outFile, sigmaxx4, 1, 'J277');
+
+fplot(sigg4/1000)
+
+xlim([0,250]);
+
+ylim([-30,30]);
+
+hold off
+
+legend('Stringer1','Stringer2','Stringer3','Stringer4')
+
+createFigure(outFile, 1,9,"E283","O303")
+
+%%Allowable stress tension
+
+
+
+Allowable1 = min(SyTs(1)/1.1, SuTs(1)/1.5)/1000;
+
+xlswrite(outFile, Allowable1, 1, 'G278');
+
+Allowable2 = min(SyTs(2)/1.1, SuTs(2)/1.5)/1000;
+
+xlswrite(outFile, Allowable2, 1, 'H278');
+
+Allowable3 = min(SyTs(3)/1.1, SuTs(3)/1.5)/1000;
+
+xlswrite(outFile, Allowable3, 1, 'I278');
+
+Allowable4 = min(SyTs(4)/1.1, SuTs(4)/1.5)/1000;
+
+xlswrite(outFile, Allowable4, 1, 'J278');
+
+
+
+%%Allowable stress compression
+
+Allowablec1 = max( SyCs(1)/1.1, SuCs(1)/1.5)/1000;
+
+xlswrite(outFile, Allowablec1, 1, 'G279');
+
+Allowablec2 = max( SyCs(2)/1.1, SuCs(2)/1.5)/1000;
+
+xlswrite(outFile, Allowablec2, 1, 'H279');
+
+Allowablec3 = max( SyCs(3)/1.1, SuCs(3)/1.5)/1000;
+
+xlswrite(outFile, Allowablec3, 1, 'I279');
+
+Allowablec4 = max( SyCs(4)/1.1, SuCs(4)/1.5)/1000;
+
+xlswrite(outFile, Allowablec4, 1, 'J279');
+
+
+
+%%Margin of safety
+
+MSS1 = max(Allowable1,Allowablec1)/sigmaxx1-1
+
+xlswrite(outFile, MSS1, 1, 'G280');
+
+MSS2 = max(Allowable2,Allowablec2)/sigmaxx2-1
+
+xlswrite(outFile, MSS2, 1, 'H280');
+
+MSS3 = min(Allowablec3,Allowable3)/sigmaxx3-1
+
+xlswrite(outFile, MSS3, 1, 'I280');
+
+MSS4 = min(Allowablec4,Allowable4)/sigmaxx4-1
+
+xlswrite(outFile, MSS4, 1, 'J280');
+
+
+
+%%Shear stress distributions
+
+syms y
+
+
+
+q12m = 2*y*A12;
+
+q23m = 2*(y-sheary/IZZ*2.5*-9-shearz/IYY*2.5*-3.6)*A23;
+
+q34m = 2*(y-sheary/IZZ*2.5*-9-shearz/IYY*2.5*-3.6-sheary/IZZ*2.5*33)*A34;
+
+q41m = 2*(y-sheary/IZZ*2.5*-9-shearz/IYY*2.5*-3.6-sheary/IZZ*2.5*33-sheary/IZZ*2.5*-9-shearz/IYY*2.5*3.6)*A41;
+
+as = q12m+q23m+q34m+q41m==shearz*(Yc-Ys(2))+(mx-int(mmx));
+
+q0 = solve(as,y);
+
+
+
+q12 = q0;
+
+q23 = q0-sheary/IZZ*2.5*-9-shearz/IYY*2.5*-3.6;
+
+q34 = q0-sheary/IZZ*2.5*-9-shearz/IYY*2.5*-3.6-sheary/IZZ*2.5*33;
+
+q41 = q0-sheary/IZZ*2.5*-9-shearz/IYY*2.5*-3.6-sheary/IZZ*2.5*33-sheary/IZZ*2.5*-9-shearz/IYY*2.5*3.6;
+
+q12n = q12/T_sk(1)*1/1000;
+
+q23n = q23/T_sk(1)*1/1000;
+
+q34n = q34/T_sk(1)*1/1000;
+
+q41n = q41/T_sk(1)*1/1000;
+
+figure(10)
+
+fplot(q12n,[0,L])
+
+hold on
+
+fplot(q23n,[0,L])
+
+hold on
+
+fplot(q34n,[0,L])
+
+hold on
+
+fplot(q41n,[0,L])
+
+xlabel("Half-span (inch)");
+
+legend("Segment1", "Segment 2", "Segment 3 ", "Segment 4");
+
+ylabel("Skin segment shear stress distribution (KSI)");
+
+createFigure(outFile, 1,10,"E313","O333")
+
+hold off
+
+%%Shear stress at root
+
+root1 = double(subs(q12n,x,0));
+
+root2 = double(subs(q23n,x,0));
+
+root3 = double(subs(q34n,x,0));
+
+root4 = double(subs(q41n,x,0));
+
+xlswrite(outFile, root1, 1, 'G308');
+
+xlswrite(outFile, root2, 1, 'H308');
+
+xlswrite(outFile, root3, 1, 'I308');
+
+xlswrite(outFile, root4, 1, 'J308');
+
+%%Allowable shear stress
+
+allows= [];
+
+allow = min(tau_y_sk(1)/1.1, tau_u_sk(1)/1.5);
+
+for i  = 1:4
+
+    allows(i) = allow/1000;
+
+end
+
+xlswrite(outFile, allows(1), 1, 'G309');
+
+xlswrite(outFile, allows(2), 1, 'H309');
+
+xlswrite(outFile, allows(3), 1, 'I309');
+
+xlswrite(outFile, allows(4), 1, 'J309');
+
+%%Margin of safety
+
+
+
+    MS1 = abs(allows(1)/root1) - 1;
+
+        MS2 = abs(allows(2)/root2) - 1;
+
+            MS3 = abs(allows(3)/root3) - 1;
+
+                MS4 = abs(allows(4)/root4) - 1;
+
+xlswrite(outFile, MS1, 1, 'G310');
+
+xlswrite(outFile, MS2, 1, 'H310');
+
+xlswrite(outFile, MS3, 1, 'I310');
+
+xlswrite(outFile, MS4, 1, 'J310');
+
+
+
+%%Distribution
+
+%%inplane
+
+figure(11)
+
+wtdis = (mz-int(sheary))/EIZZ
+
+in = int(int(wtdis))
+
+dispalcement1 = double(subs(in,x,240))
+
+xlswrite(outFile, dispalcement1, 1, 'G339')
+
+fplot(in, ([0,L]))
+
+hold on
+
+
+
+%%Transverse plane
+
+wttransverse= (my+int(pz-int(sz)))/EIYY
+
+out = -int(int(wttransverse))
+
+displacement2 = double(subs(out,x,240))
+
+xlswrite(outFile, displacement2, 1, 'G338')
+
+fplot(out,[0,L])
+
+legend('in-plane displacement', 'transverse displacement');
+
+xlabel('Half-Span (inch)');
+
+ylabel('Displacement (inch)');
+
+grid on 
+
+createFigure(outFile, 1,11,"E344","O364");
+
+hold off
+
+
+
+%%Twist distribution
+
+figure(12)
+
+twist = int((1/(2*Atot*G_sk(1)*T_sk(1)))*(q12*S(1)+q23*S(2)+q34*S(3)+q41*S(4)))*180/pi;
+
+twistans = double(subs(twist,x,240));
+
+xlswrite(outFile, twistans, 1, 'G340');
+
+fplot(twist,[0,L]);
+
+xlabel("Half-Span (Inch)");
+
+ylabel("Twist Distribution (Degrees)");
+
+createFigure(outFile, 1,12,"E367","O387");
+
+
+
+%%TOTAL WEIGHT
+
+den = 0.056
+
+total = L*(stot*den*T_sk(1)+(den*As(1)+den*As(2)+den*As(3)+den*As(4)))
+
+
+
+end 
+
