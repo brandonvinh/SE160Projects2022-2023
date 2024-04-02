@@ -1,0 +1,1545 @@
+function Airloads_Function(inFile, filename, Arcrft_Aero, Arcrft_Perf, ...
+   Arcrft_Wing, Station, Weight, Config, Environ)
+filename = "SE160A_2_AirLoads_Output.xlsx"
+infile = xlsread("SE160A_2_AirLoads_Input (Triton SD1).xlsx")
+%outfile = xlswrite(filename)
+ Name     = {'Brandon Vinh'};
+  PID      = {'A16315240'};
+  title12      = {'SE160A MATLAB Project #2- Air Performance and Air Loads'};
+  xlswrite(filename, Name   , 1, 'F9 ' );       % Write Name
+  xlswrite(filename, PID    , 1, 'F10' );
+  xlswrite(filename, 1    , 1, 'H18' );
+  xlswrite(filename, 1    , 1, 'H19' );
+   xlswrite(filename,title12,1, 'F12')
+  xlswrite(filename,Arcrft_Aero(01),1, 'H25')
+  xlswrite(filename,Arcrft_Aero(02),1, 'H26')
+  xlswrite(filename,Arcrft_Aero(03),1, 'H27')
+  xlswrite(filename,Arcrft_Aero(04),1, 'H28')
+  xlswrite(filename,Arcrft_Aero(05),1, 'H29')
+  xlswrite(filename,Arcrft_Aero(06),1, 'H30')
+   xlswrite(filename,Arcrft_Aero(07),1, 'H31')
+    xlswrite(filename,Arcrft_Aero(08),1, 'H32')
+     xlswrite(filename,Arcrft_Aero(09),1, 'H33')
+      xlswrite(filename,Arcrft_Aero(10),1, 'H34')
+       xlswrite(filename,Arcrft_Aero(11),1, 'H35')
+       xlswrite(filename,Arcrft_Aero(12),1, 'H36')
+xlswrite(filename,Arcrft_Aero(13),1, 'H37')
+       xlswrite(filename,Arcrft_Aero(14),1, 'H38')
+       xlswrite(filename,Environ(01), 1, 'H117' )
+       xlswrite(filename,Environ(02), 1, 'H118' )
+      VS1  =  Arcrft_Perf(01)      
+VNO = Arcrft_Perf(02)     
+VNE = Arcrft_Perf(03)    
+Np = Arcrft_Perf(04)        
+Nn = Arcrft_Perf(05)       
+     Ucp = Arcrft_Perf(06)       
+     Udp = Arcrft_Perf(07)     
+     Ucn = Arcrft_Perf(08)     
+     Udn = Arcrft_Perf(09)       
+    VS0 =  Arcrft_Perf(10)      
+     VFE  = Arcrft_Perf(11)      
+     npf = Arcrft_Perf(12)      
+    nnf =  Arcrft_Perf(13)       
+     Dc_flaps = Arcrft_Perf(14) 
+     Wwing = Arcrft_Wing(01)    
+  b =   Arcrft_Wing(02)    
+   bfti =  Arcrft_Wing(03)      
+    bfto =  Arcrft_Wing(04)     
+      bf = Arcrft_Wing(05)       
+    bas = Arcrft_Wing(06)       
+     bac = Arcrft_Wing(07)       
+     bfs = Arcrft_Wing(08)       
+   bfc  =  Arcrft_Wing(09)      
+   Croot   =  Arcrft_Wing(10)  
+     Ctip = Arcrft_Wing(11)      
+     aR_Rt  = Arcrft_Wing(12)    
+    aR_Tp =  Arcrft_Wing(13)     
+     ST_c4wing = Arcrft_Wing(14) 
+    b_hs  =  Arcrft_Wing(15)     
+    cr_hs =  Arcrft_Wing(16)    
+     ct_hs = Arcrft_Wing(17)   
+     ST_c4hs   =  Arcrft_Wing(18) 
+     b_vs = Arcrft_Wing(19)    
+      cr_vs = Arcrft_Wing(20)    
+    ct_vs =  Arcrft_Wing(21)    
+     ST_c4vs = Arcrft_Wing(22)    
+dCL = Arcrft_Aero(01)      
+   a0 =  Arcrft_Aero(02)       
+  CLmaxp =  Arcrft_Aero(03)   
+      astallp = Arcrft_Aero(04)               
+   CLmaxn  =  Arcrft_Aero(05) 
+    astalln  =  Arcrft_Aero(06)                   
+     Cmo = Arcrft_Aero(07)     
+     CdoA = Arcrft_Aero(08)   
+     CdoW  = Arcrft_Aero(09)    
+     CdiW  = Arcrft_Aero(10)    
+    d0  =  Arcrft_Aero(11)      
+    d10 =  Arcrft_Aero(12)      
+     hp  = Arcrft_Aero(13)                     
+    Eprop =  Arcrft_Aero(14) 
+%% PART A
+%Aircraft_Empty = Weight(1)
+%Fuel = Weight(2)
+%Pilot = Weight(3)
+%Copi = Weight(4)
+%Rearpas = Weight(5)
+%Cobag = Weight(6)
+%Fusebag = Weight(7)
+%total = Weight(8)
+% Config 1
+for i = 1:1:7
+   if Config(i,1) == 1
+       tot1(i) = Station(i)*Weight(i)
+       tot1weight(i) = Weight(i)
+   else
+       tot1(i) = 0;
+   end
+end
+Xcg1 = sum(tot1)/sum(tot1weight)
+xlswrite(filename, sum(tot1)  , 1, 'G128' );
+xlswrite(filename, Xcg1  , 1, 'G129' );
+% Config 2
+for i = 1:1:7
+   if Config(i,2) == 1
+       tot2(i) = Station(i)*Weight(i)
+       tot2weight(i) = Weight(i)
+   else
+       tot2(i) = 0;
+   end
+end
+Xcg2 = sum(tot2)/sum(tot2weight)
+xlswrite(filename, sum(tot2)  , 1, 'H128' );
+xlswrite(filename, Xcg2  , 1, 'H129' );
+% Config 3
+for i = 1:1:7
+   if Config(i,3) == 1
+       tot3(i) = Station(i)*Weight(i)
+       tot3weight(i) = Weight(i)
+   else
+       tot3(i) = 0;
+   end
+end
+Xcg3 = sum(tot3)/sum(tot3weight)
+xlswrite(filename, sum(tot3)  , 1, 'I128' );
+xlswrite(filename, Xcg3  , 1, 'I129' );
+% Config 4
+for i = 1:1:7
+   if Config(i,4) == 1
+       tot4(i) = Station(i)*Weight(i)
+       tot4weight(i) = Weight(i)
+   else
+       tot4(i) = 0;
+   end
+end
+Xcg4 = sum(tot4)/sum(tot4weight)
+xlswrite(filename, sum(tot4)  , 1, 'J128' );
+xlswrite(filename, Xcg4  , 1, 'J129' );
+% Config 5
+for i = 1:1:7
+   if Config(i,5) == 1
+       tot5(i) = Station(i)*Weight(i)
+       tot5weight(i) = Weight(i)
+   else
+       tot5(i) = 0;
+   end
+end
+Xcg5 = sum(tot5)/sum(tot5weight)
+xlswrite(filename, sum(tot5)  , 1, 'K128' );
+xlswrite(filename, Xcg5  , 1, 'K129' );
+% Config 6
+for i = 1:1:7
+   if Config(i,6) == 1
+       tot6(i) = Station(i)*Weight(i)
+       tot6weight(i) = Weight(i)
+   else
+       tot6(i) = 0;
+   end
+end
+Xcg6 = sum(tot6)/sum(tot6weight)
+xlswrite(filename, sum(tot6)  , 1, 'L128' );
+xlswrite(filename, Xcg6  , 1, 'L129' );
+% Config 7
+for i = 1:1:7
+   if Config(i,7) == 1
+       tot7(i) = Station(i)*Weight(i)
+       tot7weight(i) = Weight(i)
+   else
+       tot7(i) = 0;
+   end
+end
+Xcg7 = sum(tot7)/sum(tot7weight)
+xlswrite(filename, sum(tot7)  , 1, 'M128' );
+xlswrite(filename, Xcg7  , 1, 'M129' );
+% Config 8
+for i = 1:1:7
+   if Config(i,8) == 1
+       tot8(i) = Station(i)*Weight(i)
+       tot8weight(i) = Weight(i)
+   else
+       tot8(i) = 0;
+   end
+end
+Xcg8 = sum(tot8)/sum(tot8weight)
+xlswrite(filename, sum(tot8)  , 1, 'N128' );
+xlswrite(filename, Xcg8  , 1, 'N129' );
+xlswrite(filename, sum(tot8)  , 1, 'O128' );
+xlswrite(filename, Xcg8  , 1, 'O129' );
+figure(1)
+plot(Xcg1, sum(tot1weight), 'x','markersize',13)
+hold on
+plot(Xcg2, sum(tot2weight), '.','markersize',9)
+hold on
+plot(Xcg3, sum(tot3weight), '.','markersize',11)
+hold on
+plot(Xcg4, sum(tot4weight), 'x','markersize',13)
+hold on
+plot(Xcg5, sum(tot5weight), '.','markersize',15)
+hold on
+plot(Xcg6, sum(tot6weight), 'p','markersize',17)
+hold on
+plot(Xcg7, sum(tot7weight), 'p','markersize',19)
+hold on
+plot(Xcg8, sum(tot8weight), 'h','markersize',21)
+hold off
+text(Xcg1, sum(tot1weight),'     1')
+text(Xcg2, sum(tot2weight),'     2')
+text(Xcg3, sum(tot3weight),'     3')
+text(Xcg4, sum(tot4weight),'   4')
+text(Xcg5, sum(tot5weight),'5')
+text(Xcg6, sum(tot6weight),'6')
+text(Xcg7, sum(tot7weight),'7')
+text(Xcg8, sum(tot8weight),'8')
+xlabel('Aircraft CG Location (inch)')
+ylabel(' Aircraft Weight (lb)')
+createFigure(filename,1, 1,'F133','N145')
+%% PART B
+VS1 = Arcrft_Perf(01)
+n = 1
+xlswrite(filename, n  , 1, 'H178' );
+ST_c4wing = Arcrft_Wing(14)
+ST_c4vs =Arcrft_Wing(22)
+ST_c4hs = Arcrft_Wing(18)
+%1 knot is 1.68781 ft/s
+%density = 0.00237691
+%STALL FLAPS STOWED
+VS1 = VS1
+xlswrite(filename, VS1  , 1, 'H176' );
+VS1c=VS1*1.68781
+VS1m=VS1*1.15078
+xlswrite(filename, VS1m  , 1, 'H177' );
+q = 0.5*0.00237691*VS1c^2
+xlswrite(filename, q  , 1, 'H179' );
+L= Weight(8)*n
+xlswrite(filename, L  , 1, 'H180' );
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename, Aero_mom  , 1, 'H181' );
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*n; Weight(8)*n*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename, L(1)  , 1, 'H183' );
+xlswrite(filename, L(2)  , 1, 'H184' );
+CLWing = L(1)/q*(1/A)
+xlswrite(filename, CLWing  , 1, 'H186' );
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename, DWing  , 1, 'H185' );
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename, D_Air  , 1, 'H182' );
+alpha = CLWing/dCL+a0
+xlswrite(filename, alpha  , 1, 'H187' );
+Fnormal = L(1)*(cosd(alpha))-Wwing*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename, Fnormal  , 1, 'H188' );
+Fchord = -L(1)*sind(alpha)+Wwing*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename, Fchord  , 1, 'H189' );
+power = ((D_Air*VS1c)/(Eprop/100))/550
+xlswrite(filename, power  , 1, 'H190' );
+%Cruise
+%1 knot is 1.68781 ft/s
+%density = 0.00237691
+%STALL FLAPS STOWED
+xlswrite(filename, VNO  , 1, 'I176' );
+VNOc=VNO*1.68781
+VNOm=VNO*1.15078
+xlswrite(filename, VNOm  , 1, 'I177' );
+q = 0.5*0.00237691*VNOc^2
+xlswrite(filename, n , 1, 'I178' );
+xlswrite(filename, q , 1, 'I179' );
+L= Weight(8)*n
+xlswrite(filename, L , 1, 'I180' );
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename, Aero_mom , 1, 'I181' );
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8); Weight(8)*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename, L(1) , 1, 'I183' );
+xlswrite(filename, L(2) , 1, 'I184' );
+CLWing = L(1)/q*(1/A)
+xlswrite(filename, CLWing , 1, 'I186' );
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename, DWing , 1, 'I185' );
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename, D_Air , 1, 'I182' );
+alpha = CLWing/dCL+a0
+xlswrite(filename, alpha , 1, 'I187' );
+Fnormal = L(1)*(cosd(alpha))-Wwing*n*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename, Fnormal , 1, 'I188' );
+Fchord = -L(1)*sind(alpha)+Wwing*n*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename, Fchord , 1, 'I189' );
+power = ((D_Air*VNOc)/(Eprop/100))/550
+xlswrite(filename, power , 1, 'I190' );
+%Dive
+%1 knot is 1.68781 ft/s
+%density = 0.00237691
+%STALL FLAPS STOWED
+xlswrite(filename, VNE , 1, 'J176' );
+VNEc=VNE*1.68781
+VNEm=VNE*1.15078
+xlswrite(filename, VNEm , 1, 'J177' );
+q = 0.5*0.00237691*VNEc^2
+xlswrite(filename, q , 1, 'J179' );
+L= Weight(8)*n
+xlswrite(filename, L , 1, 'J180' );
+xlswrite(filename, n , 1, 'J178' );
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename, Aero_mom , 1, 'J181' );
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8); Weight(8)*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename, L(1) , 1, 'J183' );
+xlswrite(filename, L(2) , 1, 'J184' );
+CLWing = L(1)/q*(1/A)
+xlswrite(filename, CLWing , 1, 'J186' );
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename, DWing , 1, 'J185' );
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename, D_Air , 1, 'J182' );
+alpha = CLWing/dCL+a0
+xlswrite(filename, alpha , 1, 'J187' );
+Fnormal = L(1)*(cosd(alpha))-Wwing*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename, Fnormal , 1, 'J188' );
+Fchord = -L(1)*sind(alpha)+Wwing*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename, Fchord , 1, 'J189' );
+power = ((D_Air*VNEc)/(Eprop/100))/550
+xlswrite(filename, power , 1, 'J190' );
+%Min no Flutter
+%1 knot is 1.68781 ft/s
+%density = 0.00237691
+%STALL FLAPS STOWED
+VFlutter = VNE*1.20
+xlswrite(filename, VFlutter , 1, 'K176' );
+VFlutterc=VFlutter*1.68781
+VFlutterm=VFlutter*1.15078
+xlswrite(filename, VFlutterm , 1, 'K177' );
+q = 0.5*0.00237691*VFlutterc^2
+xlswrite(filename,q, 1, 'K179' );
+L= Weight(8)*n
+xlswrite(filename,L, 1, 'K180' );
+xlswrite(filename,n, 1, 'K178' );
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'K181' );
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8); Weight(8)*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'K183' );
+xlswrite(filename,L(2), 1, 'K184' );
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'K186' );
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'K185' );
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'K182' );
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'K187' );
+Fnormal = L(1)*(cosd(alpha))-Wwing*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'K188' );
+Fchord = -L(1)*sind(alpha)+Wwing*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'K189' );
+power = ((D_Air*VFlutterc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'K190' );
+%Extended
+xlswrite(filename,VS0, 1, 'G176' );
+VS0c=VS0*1.68781
+VS0m=VS0*1.15078
+xlswrite(filename,VS0m, 1, 'G177' );
+q = 0.5*0.00237691*VS0c^2
+xlswrite(filename,q, 1, 'G179' );
+xlswrite(filename,n, 1, 'G178' );
+L= Weight(8)*n
+xlswrite(filename,L, 1, 'G180' );
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'G181' );
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8); Weight(8)*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'G183' );
+xlswrite(filename,L(2), 1, 'G184' );
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'G186' );
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'G185' );
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'G182' );
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'G187' );
+Fnormal = L(1)*(cosd(alpha))-Wwing*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'G188' );
+Fchord = -L(1)*sind(alpha)+Wwing*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'G189' );
+power = ((D_Air*VS0c)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'G190' );
+%Gust Diamond
+%PHAA
+PHAAV =sqrt(Np)*VS1
+xlswrite(filename,PHAAV, 1, 'G196' );
+PHAAVm=PHAAV*1.15078
+xlswrite(filename,PHAAVm, 1, 'G197' );
+PHAAVc=PHAAV*1.6878
+xlswrite(filename,Np, 1, 'G198' );
+q = 0.5*0.00237691*PHAAVc^2
+xlswrite(filename,q, 1, 'G199' );
+L_Air= Np*Weight(8)
+xlswrite(filename,L_Air, 1, 'G200' );
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'G201' );
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Np*Weight(8); Np*Weight(8)*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'G203' );
+xlswrite(filename,L(2), 1, 'G204' );
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'G206' );
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'G205' );
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'G202' );
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'G207' );
+Fnormal = L(1)*(cosd(alpha))-Wwing*Np*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'G208' );
+Fchord = -L(1)*sind(alpha)+Wwing*Np*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'G209' );
+power = ((D_Air*PHAAVc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'G210' );
+%PLAA
+PLAAV = VNE
+xlswrite(filename,PLAAV, 1, 'H196' );
+PLAAc=VNE*1.68781
+PLAAm=VNE*1.15078
+xlswrite(filename,PLAAm, 1, 'H197' );
+q = 0.5*0.00237691*PLAAc^2
+xlswrite(filename,q, 1, 'H199' );
+xlswrite(filename,Np, 1, 'H198' );
+L_Air= Weight(8)*Np
+xlswrite(filename,L_Air, 1, 'H200' );
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'H201' );
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*Np; Weight(8)*Np*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'H203' );
+xlswrite(filename,L(2), 1, 'H204' );
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'H206' );
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'H205' );
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'H202' );
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'H207' );
+Fnormal = L(1)*(cosd(alpha))-Wwing*Np*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'H208' );
+Fchord = -L(1)*sind(alpha)+Wwing*Np*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'H209' );
+power = ((D_Air*PLAAc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'H210' );
+%NHAA
+NHAAV = sqrt(-Nn)*VS1
+xlswrite(filename,NHAAV, 1, 'I196' );
+NHAAc=NHAAV*1.68781
+NHAAm=NHAAV*1.15078
+xlswrite(filename,NHAAm, 1, 'I197' );
+q = 0.5*0.00237691*NHAAc^2
+xlswrite(filename,q, 1, 'I199' );
+xlswrite(filename,Nn, 1, 'I198' );
+L_Air= Weight(8)*Nn
+xlswrite(filename,L_Air, 1, 'I200' );
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'I201' );
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*Nn; Weight(8)*Nn*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'I203' );
+xlswrite(filename,L(2), 1, 'I204' );
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'I206' );
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'I205' );
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'I202' );
+alpha = CLWing/dCL+a0
+xlswrite(filename,DWing, 1, 'I207' );
+Fnormal = L(1)*(cosd(alpha))-Wwing*Nn*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'I208' );
+Fchord = -L(1)*sind(alpha)+Wwing*Nn*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'I209' );
+power = ((D_Air*NHAAc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'I210' );
+%NLAA
+NLAAV = VNE
+xlswrite(filename,NLAAV, 1, 'J196' );
+NLAAc=NLAAV*1.68781
+NLAAm=NLAAV*1.15078
+xlswrite(filename,NLAAm, 1, 'J197' );
+q = 0.5*0.00237691*NLAAc^2
+xlswrite(filename,q, 1, 'J199' );
+xlswrite(filename,Nn, 1, 'J198' );
+L_Air= Weight(8)*Nn
+xlswrite(filename,L_Air, 1, 'J200' );
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'J201' );
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*Nn; Weight(8)*Nn*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'J203' );
+ xlswrite(filename,L(2), 1, 'J204' );
+CLWing = L(1)/q*(1/A)
+ xlswrite(filename,CLWing, 1, 'J206' );
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'J205' );
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'J202' );
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'J207' );
+Fnormal = L(1)*(cosd(alpha))-Wwing*Nn*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'J208' );
+Fchord = -L(1)*sind(alpha)+Wwing*Nn*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'J209' );
+power = ((D_Air*NLAAc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'J210' );
+%Gust(Cruise)
+xlswrite(filename,VNO, 1, 'K196' )
+VNOc=VNO*1.68781
+VNOm=VNO*1.15078
+xlswrite(filename,VNOm, 1, 'K197' );
+%Gust alleviation
+Mug = (2*Weight(8))/(0.00237691*32.2*A*(Croot/12)*(dCL*(180/pi)))
+xlswrite(filename,Mug, 1, 'N211' );
+Kg = (0.88*Mug)/(5.3+Mug)
+xlswrite(filename,Kg, 1, 'N212' );
+nuc = 1+Kg*[(0.5*0.00237691*Ucp*A*(dCL*(180/pi)))/Weight(8)]*VNOc
+xlswrite(filename,nuc, 1, 'K198' );
+q = 0.5*0.00237691*VNOc^2
+xlswrite(filename,q, 1, 'K199' );
+L_Air= Weight(8)*nuc
+xlswrite(filename,L_Air, 1, 'K200' );
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'K201' );
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*nuc; Weight(8)*nuc*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'K203' );
+xlswrite(filename,L(2), 1, 'K204' );
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'K206' );
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'K205' );
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'K202' );
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'K207' );
+Fnormal = L(1)*(cosd(alpha))-Wwing*nuc*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'K208' );
+Fchord = -L(1)*sind(alpha)+Wwing*nuc*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'K209' );
+power = ((D_Air*VNOc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'K210' );
+%Gust(-Cruise)
+xlswrite(filename,VNO, 1, 'M196' );
+VNOc=VNO*1.68781
+VNOm=VNO*1.15078
+xlswrite(filename,VNOm, 1, 'M197' );
+%Gust alleviation
+Mug = (2*Weight(8))/(0.00237691*32.2*A*(Croot/12)*(dCL*(180/pi)))
+Kg = (0.88*Mug)/(5.3+Mug)
+nuc2 = 1+Kg*[(0.5*0.00237691*Ucn*A*(dCL*(180/pi)))/Weight(8)]*VNOc
+xlswrite(filename,nuc2, 1, 'M198' );
+q = 0.5*0.00237691*VNOc^2
+xlswrite(filename,q, 1, 'M199' );
+L_Air= Weight(8)*nuc2
+xlswrite(filename,L_Air, 1, 'M200' );
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'M201' );
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*nuc2; Weight(8)*nuc2*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'M203' );
+xlswrite(filename,L(2), 1, 'M204' );
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'M206' );
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'M205' );
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'M202' );
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'M207' );
+Fnormal = L(1)*(cosd(alpha))-Wwing*nuc2*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'M208' );
+Fchord = -L(1)*sind(alpha)+Wwing*nuc2*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'M209' );
+power = ((D_Air*VNOc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'M210' );
+%Gust(Dive)
+xlswrite(filename,VNE, 1, 'L196' );
+VNEc=VNE*1.68781
+VNEm=VNE*1.15078
+xlswrite(filename,VNEm, 1, 'L197' );
+%Gust alleviation
+Mug = (2*Weight(8))/(0.00237691*32.2*A*(Croot/12)*(dCL*(180/pi)))
+Kg = (0.88*Mug)/(5.3+Mug)
+nuc3 = 1+Kg*[(0.5*0.00237691*Udp*A*(dCL*(180/pi)))/Weight(8)]*VNEc
+xlswrite(filename,nuc3, 1, 'L198' );
+q = 0.5*0.00237691*VNEc^2
+xlswrite(filename,q, 1, 'L199' );
+L_Air= Weight(8)*nuc3
+xlswrite(filename,L_Air, 1, 'L200' );
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'L201' );
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*nuc3; Weight(8)*nuc3*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'L203' );
+xlswrite(filename,L(2), 1, 'L204' );
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'L206' );
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'L205' );
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'L202' );
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'L207' );
+Fnormal = L(1)*(cosd(alpha))-Wwing*nuc3*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'L208' );
+Fchord = -L(1)*sind(alpha)+Wwing*nuc3*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'L209' );
+power = ((D_Air*VNEc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'L210' );
+%Gust(-Dive)
+xlswrite(filename,VNE, 1, 'N196' );
+VNEc=VNE*1.68781
+VNEm=VNE*1.15078
+xlswrite(filename,VNEm, 1, 'N197' );
+%Gust alleviation
+Mug = (2*Weight(8))/(0.00237691*32.2*A*(Croot/12)*(dCL*(180/pi)))
+Kg = (0.88*Mug)/(5.3+Mug)
+nuc4 = 1+Kg*[(0.5*0.00237691*Udn*A*(dCL*(180/pi)))/Weight(8)]*VNEc
+xlswrite(filename,nuc4, 1, 'N198' );
+q = 0.5*0.00237691*VNEc^2
+xlswrite(filename,q, 1, 'N199' );
+L_Air= Weight(8)*nuc4
+xlswrite(filename,L_Air, 1, 'N200' );
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'N201' );
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*nuc4; Weight(8)*nuc4*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'N203' );
+xlswrite(filename,L(2), 1, 'N204' );
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'N206' );
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'N205' );
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'N202' );
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'N207' );
+Fnormal = L(1)*(cosd(alpha))-Wwing*nuc4*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'N208' );
+Fchord = -L(1)*sind(alpha)+Wwing*nuc4*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'N209' );
+power = ((D_Air*VNEc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'N210' );
+%VN Diagram
+figure(2)
+axis([0 200 -3 5])
+ylabel('Load Factor (n)')
+xlabel('Aircraft Speed-Sea Level (Knots)')
+grid on
+hold on
+xline(VFlutter, 'g')
+plot(VFlutter, n,'ob','MarkerSize',4,'MarkerFaceColor','b')
+text(VFlutter, n,'5')
+yline(1)
+plot(VS0, n,'ob','MarkerSize',4,'MarkerFaceColor','b')
+text(VS0, n,'1')
+yline(0)
+plot(PHAAV, Np,'ob','MarkerSize',4,'MarkerFaceColor','b')
+text(PHAAV, Np,'6')
+plot(PLAAV, Np,'ob','MarkerSize',4,'MarkerFaceColor','b')
+text(PLAAV, Np,'7')
+plot(NLAAV, Nn,'ob','MarkerSize',4,'MarkerFaceColor','b')
+text(NLAAV, Nn,'9')
+plot(NHAAV, Nn,'ob','MarkerSize',4,'MarkerFaceColor','b')
+text(NHAAV, Nn,'8')
+plot(VS1, n,'ob','MarkerSize',4,'MarkerFaceColor','b')
+text(VS1, n,'2')
+plot([PHAAV,PLAAV],[Np Np],'MarkerFaceColor','b')
+plot([NHAAV,NLAAV],[Nn Nn],'MarkerFaceColor','b')
+plot([PLAAV,NLAAV],[Np Nn],'MarkerFaceColor','b')
+plot([PLAAV,NLAAV],[Np Nn],'MarkerFaceColor','b')
+f = polyfit([0 VS1 PHAAV],[0 n Np],2)
+fplot(@(x) f(1)*x^2+f(2)*x+f(3),[0 PHAAV],'b')
+f = polyfit([0 NHAAV],[0 Nn],2)
+fplot(@(x) f(1)*x^2+f(2)*x+f(3),[0 NHAAV],'b')
+%envelope
+plot(VNO,nuc,'ob','MarkerSize',4,'MarkerFaceColor','r')
+text(VNO, nuc,'10')
+plot(VNO,nuc2,'ob','MarkerSize',4,'MarkerFaceColor','r')
+text(VNO, nuc2,'12')
+plot(VNE,nuc3,'ob','MarkerSize',4,'MarkerFaceColor','r')
+text(VNE, nuc3,'11')
+plot(VNE,nuc4,'ob','MarkerSize',4,'MarkerFaceColor','r')
+text(VNE, nuc4,'13')
+f = polyfit([0 VNO],[n nuc],1)
+fplot(@(x) f(1)*x+f(2),[n VNO],'r')
+f = polyfit([0 VNO],[n nuc2],1)
+fplot(@(x) f(1)*x+f(2),[n VNO],'r')
+f = polyfit([0 VNE],[n nuc3],1)
+fplot(@(x) f(1)*x+f(2),[n VNE],'--r')
+f = polyfit([0 VNE],[n nuc4],1)
+fplot(@(x) f(1)*x+f(2),[n VNE],'--b')
+f = polyfit([0 VNO],[0 n],2)
+fplot(@(x) f(1)*x^2+f(2)*x+f(3),[n 3],'--b')
+f = polyfit([VNO VNE],[nuc nuc3],1)
+fplot(@(x) f(1)*x+f(2),[VNO VNE],'r')
+f = polyfit([VNO VNE],[nuc2 nuc4],1)
+fplot(@(x) f(1)*x+f(2),[VNO VNE],'r')
+FV = sqrt(npf)*VS0
+f = polyfit([0 VS0 FV],[0 n npf],2)
+fplot(@(x) f(1)*x^2+f(2)*x+f(3),[0 FV],'--b')
+nFV = sqrt(-nnf)*VS0
+f = polyfit([0 nFV],[0 nnf],2)
+fplot(@(x) f(1)*x^2+f(2)*x+f(3),[0 nFV],'--b')
+f = polyfit([nFV VFE],[nnf nnf],1)
+fplot(@(x) f(1)*x+f(2),[nFV VFE],'--b')
+f = polyfit([FV VFE],[npf npf],1)
+fplot(@(x) f(1)*x+f(2),[FV VFE],'--b')
+hold off
+createFigure(filename,1, 2,'F153','N169')
+%% PART C
+alt=Environ(01)
+temp = Environ(02)
+T0 = 518.67
+TAS = 518.67-(0.00356616*alt)
+PAS = 2116.22*((TAS/T0)^5.255912)
+DEN = PAS/(1716.5488*(temp+459.67))
+xlswrite(filename,DEN, 1, 'G219' )
+%Stowed
+n = 1
+xlswrite(filename,n, 1, 'H248' )
+ST_c4wing = Arcrft_Wing(14)
+ST_c4vs =Arcrft_Wing(22)
+ST_c4hs = Arcrft_Wing(18)
+%1 knot is 1.68781 ft/s
+Va = VS1*sqrt(0.00237691/DEN)
+xlswrite(filename,Va, 1, 'H246' )
+Vac=Va*1.68781
+Vam = Va*1.15078
+xlswrite(filename,Vam, 1, 'H247' )
+q = 0.5*DEN*Vac^2
+xlswrite(filename,q, 1, 'H249' )
+L= Weight(8)*n
+xlswrite(filename,L, 1, 'H250' )
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'H251' )
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*n; Weight(8)*n*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'H253' )
+xlswrite(filename,L(2), 1, 'H254' )
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'H256' )
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'H255' )
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'H252' )
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'H257' )
+Fnormal = L(1)*(cosd(alpha))-Wwing*n*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'H258' )
+Fchord = -L(1)*sind(alpha)+Wwing*n*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'H259' )
+power = ((D_Air*Vac)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'H260' )
+d = 1-(DEN/0.00237691)
+powersea = power*((DEN/0.00237691)-(d/7.55))^-1
+xlswrite(filename,powersea, 1, 'H261' )
+%cruise
+n = 1
+xlswrite(filename,n, 1, 'I248' )
+ST_c4wing = Arcrft_Wing(14)
+ST_c4vs =Arcrft_Wing(22)
+ST_c4hs = Arcrft_Wing(18)
+%1 knot is 1.68781 ft/s
+Va = VNO*sqrt(0.00237691/DEN)
+xlswrite(filename,Va, 1, 'I246' )
+Vac=Va*1.68781
+Vam = Va*1.15078
+xlswrite(filename,Vam, 1, 'I247' )
+q = 0.5*DEN*Vac^2
+xlswrite(filename,q, 1, 'I249' )
+L= Weight(8)*n
+xlswrite(filename,L, 1, 'I250' )
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'I251' )
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*n; Weight(8)*n*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'I253' )
+xlswrite(filename,L(2), 1, 'I254' )
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'I256' )
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'I255' )
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'I252' )
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'I257' )
+Fnormal = L(1)*(cosd(alpha))-Wwing*n*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'I258' )
+Fchord = -L(1)*sind(alpha)+Wwing*n*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'I259' )
+power = ((D_Air*Vac)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'I260' )
+d = 1-(DEN/0.00237691)
+powersea = power*((DEN/0.00237691)-(d/7.55))^-1
+xlswrite(filename,powersea, 1, 'I261' )
+%Dive
+n = 1
+xlswrite(filename,n, 1, 'J248' )
+ST_c4wing = Arcrft_Wing(14)
+ST_c4vs =Arcrft_Wing(22)
+ST_c4hs = Arcrft_Wing(18)
+%1 knot is 1.68781 ft/s
+%density = 0.00237691
+VNEa = VNE*sqrt(0.00237691/DEN)
+xlswrite(filename,VNEa, 1, 'J246' )
+VNEac=VNEa*1.68781
+Vam = VNEa*1.15078
+xlswrite(filename,Vam, 1, 'J247' )
+q = 0.5*DEN*VNEac^2
+xlswrite(filename,q, 1, 'J249' )
+L= Weight(8)*n
+xlswrite(filename,L, 1, 'J250' )
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'J251' )
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*n; Weight(8)*n*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'J253' )
+xlswrite(filename,L(2), 1, 'J254' )
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'J256' )
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'J255' )
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'J252' )
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'J257' )
+Fnormal = L(1)*(cosd(alpha))-Wwing*n*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'J258' )
+Fchord = -L(1)*sind(alpha)+Wwing*n*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'J259' )
+power = ((D_Air*VNEac)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'J260' )
+d = 1-(DEN/0.00237691)
+powersea = power*((DEN/0.00237691)-(d/7.55))^-1
+xlswrite(filename,powersea, 1, 'J261' )
+%Min No Flutter
+n = 1
+xlswrite(filename,n, 1, 'K248' )
+ST_c4wing = Arcrft_Wing(14)
+ST_c4vs =Arcrft_Wing(22)
+ST_c4hs = Arcrft_Wing(18)
+%1 knot is 1.68781 ft/s
+%density = 0.00237691
+VFluttera = VFlutter*sqrt(0.00237691/DEN)
+xlswrite(filename,VFluttera, 1, 'K246' )
+VFlutterac=VFluttera*1.68781
+VFlutteram = VFluttera*1.15078
+xlswrite(filename,VFlutteram, 1, 'K247' )
+q = 0.5*DEN*VFlutterac^2
+xlswrite(filename,q, 1, 'K249' )
+L= Weight(8)*n
+xlswrite(filename,L, 1, 'K250' )
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'K251' )
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*n; Weight(8)*n*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'K253' )
+xlswrite(filename,L(2), 1, 'K254' )
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'K256' )
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'K255' )
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'K252' )
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'K257' )
+Fnormal = L(1)*(cosd(alpha))-Wwing*n*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'K258' )
+Fchord = -L(1)*sind(alpha)+Wwing*n*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'K259' )
+power = ((D_Air*VFlutterac)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'K260' )
+d = 1-(DEN/0.00237691)
+powersea = power*((DEN/0.00237691)-(d/7.55))^-1
+xlswrite(filename,powersea, 1, 'K261' )
+%Extended
+n = 1
+xlswrite(filename,n, 1, 'G248' )
+ST_c4wing = Arcrft_Wing(14)
+ST_c4vs =Arcrft_Wing(22)
+ST_c4hs = Arcrft_Wing(18)
+%1 knot is 1.68781 ft/s
+%density = 0.00237691
+VS0a = VS0*sqrt(0.00237691/DEN)
+xlswrite(filename,VS0a, 1, 'G246' )
+VS0ac=VS0a*1.68781
+VS0am = VS0a*1.15078
+xlswrite(filename,VS0am, 1, 'G247' )
+q = 0.5*DEN*VS0ac^2
+xlswrite(filename,q, 1, 'G249' )
+L= Weight(8)*n
+xlswrite(filename,L, 1, 'G250' )
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'G251' )
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*n; Weight(8)*n*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'G253' )
+xlswrite(filename,L(2), 1, 'G254' )
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'G256' )
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'G255' )
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'G252' )
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'G257' )
+Fnormal = L(1)*(cosd(alpha))-Wwing*n*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'G258' )
+Fchord = -L(1)*sind(alpha)+Wwing*n*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'G259' )
+power = ((D_Air*VS0ac)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'G260' )
+d = 1-(DEN/0.00237691)
+powersea = power*((DEN/0.00237691)-(d/7.55))^-1
+xlswrite(filename,powersea, 1, 'G261' )
+%Gust Diamond
+%PHAA
+PHAAV =sqrt(Np)*VS1*sqrt(0.00237691/DEN)
+xlswrite(filename,PHAAV, 1, 'G266' )
+PHAAVm=PHAAV*1.15078
+xlswrite(filename,PHAAVm, 1, 'G267' )
+PHAAVc=PHAAV*1.6878
+xlswrite(filename,Np, 1, 'G268' )
+q = 0.5*DEN*PHAAVc^2
+xlswrite(filename,q, 1, 'G269' )
+L_Air= Np*Weight(8)
+xlswrite(filename,L_Air, 1, 'G270' )
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'G271' )
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Np*Weight(8); Np*Weight(8)*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'G273' )
+xlswrite(filename,L(2), 1, 'G274' )
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'G276' )
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'G275' )
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'G272' )
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'G277' )
+Fnormal = L(1)*(cosd(alpha))-Wwing*Np*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'G278' )
+Fchord = -L(1)*sind(alpha)+Wwing*Np*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'G279' )
+power = ((D_Air*PHAAVc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'G280' )
+powersea = power*((DEN/0.00237691)-(d/7.55))^-1
+xlswrite(filename,powersea, 1, 'G281' )
+%PLAA
+PLAAV = VNEa
+xlswrite(filename,PLAAV, 1, 'H266' )
+PLAAc=VNEa*1.68781
+PLAAm=VNE*1.15078
+xlswrite(filename,PLAAm, 1, 'H267' )
+q = 0.5*DEN*PLAAc^2
+xlswrite(filename,q, 1, 'H269' )
+xlswrite(filename,Np, 1, 'H268' )
+L_Air= Weight(8)*Np
+xlswrite(filename,L_Air, 1, 'H270' )
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'H271' )
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*Np; Weight(8)*Np*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'H273' )
+xlswrite(filename,L(2), 1, 'H274' )
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'H276' )
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'H275' )
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'H272' )
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'H277' )
+Fnormal = L(1)*(cosd(alpha))-Wwing*Np*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'H278' )
+Fchord = -L(1)*sind(alpha)+Wwing*Np*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'H279' )
+power = ((D_Air*PHAAVc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'H280' )
+d = 1-(DEN/0.00237691)
+powersea = power*((DEN/0.00237691)-(d/7.55))^-1
+xlswrite(filename,powersea, 1, 'H281' )
+%NHAA
+NHAAV = sqrt(-Nn)*VS1*sqrt(0.00237691/DEN)
+xlswrite(filename,NHAAV, 1, 'I266' )
+NHAAc=NHAAV*1.68781
+NHAAm=NHAAV*1.15078
+xlswrite(filename,NHAAm, 1, 'I267' )
+q = 0.5*DEN*NHAAc^2
+xlswrite(filename,q, 1, 'I269' )
+L_Air= Weight(8)*Nn
+xlswrite(filename,Nn, 1, 'I268' )
+xlswrite(filename,L_Air, 1, 'I270' )
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'I271' )
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*Nn; Weight(8)*Nn*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'I273' )
+xlswrite(filename,L(2), 1, 'I274' )
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'I276' )
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'I275' )
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'I272' )
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'I277' )
+Fnormal = L(1)*(cosd(alpha))-Wwing*Nn*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'I278' )
+Fchord = -L(1)*sind(alpha)+Wwing*Nn*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'I279' )
+power = ((D_Air*NHAAc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'I280' )
+d = 1-(DEN/0.00237691)
+powersea = power*((DEN/0.00237691)-(d/7.55))^-1
+xlswrite(filename,powersea, 1, 'I281' )
+%NLAA
+NLAAV = VNEa
+xlswrite(filename,NLAAV, 1, 'J266' )
+NLAAc=NLAAV*1.68781
+NHAAm=NLAAV*1.15078
+xlswrite(filename,NLAAm, 1, 'J267' )
+q = 0.5*DEN*NLAAc^2
+xlswrite(filename,q, 1, 'J269' )
+xlswrite(filename,Nn, 1, 'J268' )
+L_Air= Weight(8)*Nn
+xlswrite(filename,L_Air, 1, 'J270' )
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'J271' )
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*Nn; Weight(8)*Nn*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'J273' )
+xlswrite(filename,L(2), 1, 'J274' )
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'J276' )
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'J275' )
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'J272' )
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'J277' )
+Fnormal = L(1)*(cosd(alpha))-Wwing*Nn*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'J278' )
+Fchord = -L(1)*sind(alpha)+Wwing*Nn*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'J279' )
+power = ((D_Air*NLAAc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'J280' )
+d = 1-(DEN/0.00237691)
+powersea = power*((DEN/0.00237691)-(d/7.55))^-1
+xlswrite(filename,powersea, 1, 'J281' )
+%Gust(Cruise)
+Va1 = VNO*sqrt(0.00237691/DEN)
+xlswrite(filename,Va1, 1, 'K266' )
+Vac=Va1*1.68781
+Vam=Va1*1.15078
+xlswrite(filename,Vam, 1, 'K267' )
+%Gust alleviation
+Mug = (2*Weight(8))/(DEN*32.2*A*(Croot/12)*(dCL*(180/pi)))
+xlswrite(filename,Mug, 1, 'N282' )
+Kg = (0.88*Mug)/(5.3+Mug)
+xlswrite(filename,Kg, 1, 'N283' )
+nuc = 1+Kg*[(0.5*DEN*Ucp*A*(dCL*(180/pi)))/Weight(8)]*Vac
+xlswrite(filename,nuc, 1, 'K268' )
+q = 0.5*DEN*Vac^2
+xlswrite(filename,q, 1, 'K269' )
+L_Air= Weight(8)*nuc
+xlswrite(filename,L_Air, 1, 'K270' )
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'K271' )
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*nuc; Weight(8)*nuc*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'K273' )
+xlswrite(filename,L(2), 1, 'K274' )
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'K276' )
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'K275' )
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'K272' )
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'K277' )
+Fnormal = L(1)*(cosd(alpha))-Wwing*nuc*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'K278' )
+Fchord = -L(1)*sind(alpha)+Wwing*nuc*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'K279' )
+power = ((D_Air*Vac)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'K280' )
+d = 1-(DEN/0.00237691)
+powersea = power*((DEN/0.00237691)-(d/7.55))^-1
+xlswrite(filename,powersea, 1, 'K281' )
+%Gust(-Cruise)
+Va2 = VNO*sqrt(0.00237691/DEN)
+xlswrite(filename,Va2, 1, 'M266' )
+VNOc=Va2*1.68781
+VNOm=Va2*1.15078
+xlswrite(filename,VNOm, 1, 'M267' )
+%Gust alleviation
+Mug = (2*Weight(8))/(DEN*32.2*A*(Croot/12)*(dCL*(180/pi)))
+Kg = (0.88*Mug)/(5.3+Mug)
+nuc2 = 1+Kg*[(0.5*DEN*Ucn*A*(dCL*(180/pi)))/Weight(8)]*VNOc
+xlswrite(filename,nuc2, 1, 'M268' )
+q = 0.5*DEN*VNOc^2
+xlswrite(filename,q, 1, 'M269' )
+L_Air= Weight(8)*nuc2
+xlswrite(filename,L_Air, 1, 'M270' )
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'M271' )
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*nuc2; Weight(8)*nuc2*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'M273' )
+xlswrite(filename,L(2), 1, 'M274' )
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'M276' )
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'M275' )
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'M272' )
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'M277' )
+Fnormal = L(1)*(cosd(alpha))-Wwing*nuc2*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'M278' )
+Fchord = -L(1)*sind(alpha)+Wwing*nuc2*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'M279' )
+power = ((D_Air*VNOc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'M280' )
+d = 1-(DEN/0.00237691)
+powersea = power*((DEN/0.00237691)-(d/7.55))^-1
+xlswrite(filename,powersea, 1, 'M281' )
+%Gust(Dive)
+Va3=VNE*sqrt(0.00237691/DEN)
+xlswrite(filename,Va3, 1, 'L266' )
+VNEc=Va3*1.68781
+VNEm= Va3*1.15078
+xlswrite(filename,VNEm, 1, 'L267' )
+%Gust alleviation
+Mug = (2*Weight(8))/(DEN*32.2*A*(Croot/12)*(dCL*(180/pi)))
+Kg = (0.88*Mug)/(5.3+Mug)
+nuc3 = 1+Kg*[(0.5*DEN*Udp*A*(dCL*(180/pi)))/Weight(8)]*VNEc
+xlswrite(filename,nuc3, 1, 'L268' )
+q = 0.5*DEN*VNEc^2
+xlswrite(filename,q, 1, 'L269' )
+L_Air= Weight(8)*nuc3
+xlswrite(filename,L_Air, 1, 'L270' )
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'L271' )
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*nuc3; Weight(8)*nuc3*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'L273' )
+xlswrite(filename,L(2), 1, 'L274' )
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'L276' )
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'L275' )
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'L272' )
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'L277' )
+Fnormal = L(1)*(cosd(alpha))-Wwing*nuc3*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'L278' )
+Fchord = -L(1)*sind(alpha)+Wwing*nuc3*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'L279' )
+power = ((D_Air*VNEc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'L280' )
+d = 1-(DEN/0.00237691)
+powersea = power*((DEN/0.00237691)-(d/7.55))^-1
+xlswrite(filename,powersea, 1, 'L281' )
+%Gust(-Dive)
+Va4 = VNE*sqrt(0.00237691/DEN)
+xlswrite(filename,Va4, 1, 'N266' )
+VNEc=Va4*1.68781
+VNEm=Va4*1.15078
+xlswrite(filename,VNEm, 1, 'N267' )
+%Gust alleviation
+Mug = (2*Weight(8))/(DEN*32.2*A*(Croot/12)*(dCL*(180/pi)))
+Kg = (0.88*Mug)/(5.3+Mug)
+nuc4 = 1+Kg*[(0.5*DEN*Udn*A*(dCL*(180/pi)))/Weight(8)]*VNEc
+xlswrite(filename,nuc4, 1, 'N268' )
+q = 0.5*DEN*VNEc^2
+xlswrite(filename,q, 1, 'N269' )
+L_Air= Weight(8)*nuc4
+xlswrite(filename,L_Air, 1, 'N270' )
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+xlswrite(filename,Aero_mom, 1, 'N271' )
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Weight(8)*nuc4; Weight(8)*nuc4*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+xlswrite(filename,L(1), 1, 'N273' )
+xlswrite(filename,L(2), 1, 'N274' )
+CLWing = L(1)/q*(1/A)
+xlswrite(filename,CLWing, 1, 'N276' )
+CDwing = CdoW+CdiW*(CLWing)^2
+DWing = q*A*CDwing
+xlswrite(filename,DWing, 1, 'N275' )
+AHS = (b_hs/12)*(cr_hs/12)
+CLTail = L(2)/q*(1/AHS)
+CdFuse = CdoA+CdoW+CdiW*(CLWing^2)
+D_Air = q*CdFuse*A
+xlswrite(filename,D_Air, 1, 'N272' )
+alpha = CLWing/dCL+a0
+xlswrite(filename,alpha, 1, 'N277' )
+Fnormal = L(1)*(cosd(alpha))-Wwing*nuc4*(cosd(alpha))+DWing*sind(alpha)
+xlswrite(filename,Fnormal, 1, 'N278' )
+Fchord = -L(1)*sind(alpha)+Wwing*nuc4*sind(alpha)+DWing*cosd(alpha)
+xlswrite(filename,Fchord, 1, 'N279' )
+power = ((D_Air*VNEc)/(Eprop/100))/550
+xlswrite(filename,power, 1, 'N280' )
+d = 1-(DEN/0.00237691)
+powersea = power*((DEN/0.00237691)-(d/7.55))^-1
+xlswrite(filename,powersea, 1, 'N281' )
+%VN Diagram
+figure(3)
+axis([0 300 -4 5])
+ylabel('Load Factor (n)')
+xlabel('Aircraft Speed-Sea Level (Knots)')
+grid on
+hold on
+xline(VFluttera, 'g')
+plot(VFluttera, n,'ob','MarkerSize',4,'MarkerFaceColor','b')
+text(VFluttera, n,'5')
+yline(1)
+plot(VS0*sqrt(0.00237691/DEN), n,'ob','MarkerSize',4,'MarkerFaceColor','b')
+text(VS0*sqrt(0.00237691/DEN), n,'1')
+yline(0)
+plot(PHAAV, Np,'ob','MarkerSize',4,'MarkerFaceColor','b')
+text(PHAAV, Np,'6')
+plot(PLAAV, Np,'ob','MarkerSize',4,'MarkerFaceColor','b')
+text(PLAAV, Np,'7')
+plot(NLAAV, Nn,'ob','MarkerSize',4,'MarkerFaceColor','b')
+text(NLAAV, Nn,'9')
+plot(NHAAV, Nn,'ob','MarkerSize',4,'MarkerFaceColor','b')
+text(NHAAV, Nn,'8')
+plot(VS1, n,'ob','MarkerSize',4,'MarkerFaceColor','b')
+text(VS1, n,'2')
+plot([PHAAV,PLAAV],[Np Np],'MarkerFaceColor','b')
+plot([NHAAV,NLAAV],[Nn Nn],'MarkerFaceColor','b')
+plot([PLAAV,NLAAV],[Np Nn],'MarkerFaceColor','b')
+plot([PLAAV,NLAAV],[Np Nn],'MarkerFaceColor','b')
+f = polyfit([0 VS1*sqrt(0.00237691/DEN) PHAAV],[0 n Np],2)
+fplot(@(x) f(1)*x^2+f(2)*x+f(3),[0 PHAAV],'b')
+f = polyfit([0 NHAAV],[0 Nn],2)
+fplot(@(x) f(1)*x^2+f(2)*x+f(3),[0 NHAAV],'b')
+%envelope
+plot(VNO*sqrt(0.00237691/DEN),nuc,'ob','MarkerSize',4,'MarkerFaceColor','r')
+text(VNO*sqrt(0.00237691/DEN), nuc,'10')
+plot(VNO*sqrt(0.00237691/DEN),nuc2,'ob','MarkerSize',4,'MarkerFaceColor','r')
+text(VNO*sqrt(0.00237691/DEN), nuc2,'12')
+plot(VNE*sqrt(0.00237691/DEN),nuc3,'ob','MarkerSize',4,'MarkerFaceColor','r')
+text(VNE*sqrt(0.00237691/DEN), nuc3,'11')
+plot(VNE*sqrt(0.00237691/DEN),nuc4,'ob','MarkerSize',4,'MarkerFaceColor','r')
+text(VNE*sqrt(0.00237691/DEN), nuc4,'13')
+f = polyfit([0 VNO*sqrt(0.00237691/DEN)],[n nuc],1)
+fplot(@(x) f(1)*x+f(2),[n VNO*sqrt(0.00237691/DEN)],'r')
+f = polyfit([0 VNO*sqrt(0.00237691/DEN)],[n nuc2],1)
+fplot(@(x) f(1)*x+f(2),[n VNO*sqrt(0.00237691/DEN)],'r')
+f = polyfit([0 VNE*sqrt(0.00237691/DEN)],[n nuc3],1)
+fplot(@(x) f(1)*x+f(2),[n VNE*sqrt(0.00237691/DEN)],'--r')
+f = polyfit([0 VNE*sqrt(0.00237691/DEN)],[n nuc4],1)
+fplot(@(x) f(1)*x+f(2),[n VNE*sqrt(0.00237691/DEN)],'--b')
+f = polyfit([0 VNO*sqrt(0.00237691/DEN)],[0 n],2)
+fplot(@(x) f(1)*x^2+f(2)*x+f(3),[n 3],'--b')
+f = polyfit([VNO*sqrt(0.00237691/DEN) VNE*sqrt(0.00237691/DEN)],[nuc nuc3],1)
+fplot(@(x) f(1)*x+f(2),[VNO*sqrt(0.00237691/DEN) VNE*sqrt(0.00237691/DEN)],'r')
+f = polyfit([VNO*sqrt(0.00237691/DEN) VNE*sqrt(0.00237691/DEN)],[nuc2 nuc4],1)
+fplot(@(x) f(1)*x+f(2),[VNO*sqrt(0.00237691/DEN) VNE*sqrt(0.00237691/DEN)],'r')
+FV = sqrt(npf)*VS0*sqrt(0.00237691/DEN)
+f = polyfit([0 VS0*sqrt(0.00237691/DEN) FV],[0 n npf],2)
+fplot(@(x) f(1)*x^2+f(2)*x+f(3),[0 FV],'--b')
+nFV = sqrt(-nnf)*VS0*sqrt(0.00237691/DEN)
+f = polyfit([0 nFV],[0 nnf],2)
+fplot(@(x) f(1)*x^2+f(2)*x+f(3),[0 nFV],'--b')
+f = polyfit([nFV VFE*sqrt(0.00237691/DEN)],[nnf nnf],1)
+fplot(@(x) f(1)*x+f(2),[nFV VFE*sqrt(0.00237691/DEN)],'--b')
+f = polyfit([FV VFE*sqrt(0.00237691/DEN)],[npf npf],1)
+fplot(@(x) f(1)*x+f(2),[FV VFE*sqrt(0.00237691/DEN)],'--b')
+hold off
+createFigure(filename,1, 3,'F224','N240')
+%% PART D
+%Wing distributed lift along the quarter chord using Shrenk’s approximation
+%PHAA
+PHAAV =sqrt(Np)*VS1*sqrt(0.00237691/DEN)
+PHAAVm=PHAAV*1.15078
+PHAAVc=PHAAV*1.6878
+Np
+q = 0.5*DEN*PHAAVc^2
+L_Air= Np*Weight(8)
+Aero_mom=q*Cmo*(b/12)*(Croot/12)*(Croot/12)
+%Area in ft
+A=(b/12)*(Croot/12)
+%Finding Lift about tail moment respectively
+MA1 = [1 1; ST_c4wing/12 ST_c4hs/12]
+AM1 = [Np*Weight(8); Np*Weight(8)*(Xcg8/12)+Aero_mom]
+L = linsolve(MA1,AM1)
+CLWing = L(1)/q*(1/A)
+%u(i+1) = 1-((2*x/b)*(1-(Ctip/Croot))+(2*(1+(Ctip/Croot))/pi)*sqrt(1-(2*x/b)^2))
+x = linspace(0, 215, 216)
+LIFT=((Croot/12).*(1-(2.*(x/12)/(b/12).*(1-(Ctip/Croot)))));
+ELLIPSE = ((2*(Croot/12)/pi).*(1+(Ctip/Croot)).*sqrt((1-(2.*(x/12)/(b/12)).^2)))
+u =  0.5*DEN*PHAAVc^2*CLWing*LIFT
+ELLIPSE2 = ELLIPSE.* 0.5*DEN*PHAAVc^2*CLWing
+figure(4)
+u(end) = 0
+plot(x,u,'--b')
+hold on
+plot(-x,u,'--b')
+plot(x,ELLIPSE2,'--r')
+plot(-x,ELLIPSE2,'--r')
+shrenk = 0.5*DEN*PHAAVc^2*CLWing*((ELLIPSE+LIFT)*0.5)
+plot(x,shrenk,'--g')
+plot(-x,shrenk,'--g')
+xlabel('Span (inch)')
+legend('taper (blue)','Shrenk (Green)', 'Ellipse (red)')
+ylabel('Distributed Lift (lb/ft)')
+hold off
+createFigure(filename,1, 4,'F314','N329')
+%Wing distributed weight along the span that includes the both the distributed structural weight of the wing
+%and the distributed weight of the internal wing fuel tanks
+x = linspace(0,b/2,b/2+1)
+Acrft_fuel=Weight(02) 
+WING = -Np*Wwing
+FUEL = -Np*Acrft_fuel
+FI = b/2*bfti/100
+FO = b/2*bfto/100
+FII = length(find(x/12<FI/12))
+FOO = length(find(x/12<FO/12))
+WWW = zeros(1,round(b/2)+1)
+distt = FOO-FII
+W = WING/A*LIFT
+WF = FUEL/(2*(FOO/12-FII/12))*ones(1,distt)
+WWW(FII:FOO-1) = WF
+W = W+WWW
+W(end) = 0
+figure(5)
+hold on
+plot(x,W,'g'); plot(-x,W,'g')
+ylabel('Effective Wing Maneuvering Weight')
+xlabel('Span (inch)')
+
